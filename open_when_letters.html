@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open When — little letters for you</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #100b12;
+  --surface: #1b121c;
+  --surface-2: #241724;
+  --text: #fff4f2;
+  --muted: #c6b2c0;
+  --accent: #e9a1b4;
+  --accent-2: #8d506e;
+  --border: #503044;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: Georgia, 'Times New Roman', serif; }
+button { font: inherit; }
+.app { min-height: 100vh; width: 100%; overflow: hidden; position: relative; background: radial-gradient(ellipse at 50% 0%, #3a1d35 0%, #1a101e 42%, #100b12 80%); }
+.stars { position: absolute; inset: 0; pointer-events: none; opacity: .65; background-image: radial-gradient(1px 1px at 10% 14%, #fff 99%, transparent), radial-gradient(1px 1px at 83% 10%, #f3c9da 99%, transparent), radial-gradient(1.5px 1.5px at 72% 28%, #fff 99%, transparent), radial-gradient(1px 1px at 23% 37%, #fff 99%, transparent), radial-gradient(1px 1px at 91% 54%, #f3c9da 99%, transparent), radial-gradient(1px 1px at 8% 69%, #fff 99%, transparent), radial-gradient(1.5px 1.5px at 62% 76%, #fff 99%, transparent), radial-gradient(1px 1px at 37% 88%, #f3c9da 99%, transparent); }
+main { position: relative; max-width: 1050px; margin: auto; padding: 56px 22px 42px; }
+.topline { text-align: center; color: var(--accent); letter-spacing: .22em; text-transform: uppercase; font: 11px/1.5 Arial, sans-serif; }
+h1 { text-align: center; font-weight: 400; font-size: clamp(42px, 7vw, 76px); line-height: 1.04; letter-spacing: -.04em; margin: 17px 0 16px; }
+h1 em { color: var(--accent); font-weight: 400; }
+.intro { text-align: center; max-width: 540px; margin: 0 auto; color: var(--muted); font: 15px/1.8 Arial, sans-serif; }
+.small-heart { color: var(--accent); font-size: 18px; text-align: center; margin: 24px 0 28px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; }
+.letter { min-height: 190px; text-align: left; color: var(--text); border: 1px solid var(--border); background: linear-gradient(145deg, rgba(51,29,47,.95), rgba(27,18,28,.96)); border-radius: 14px; padding: 21px 19px; cursor: pointer; transition: transform .22s ease, border-color .22s ease, background .22s ease; position: relative; overflow: hidden; }
+.letter:hover, .letter:focus-visible { transform: translateY(-4px); border-color: var(--accent); background: linear-gradient(145deg, #46243e, #211622); outline: none; }
+.envelope { width: 42px; height: 32px; border: 1px solid #d68ca7; border-radius: 4px; margin-bottom: 19px; position: relative; opacity: .95; }
+.envelope:before { content: ''; position: absolute; width: 28px; height: 28px; border-right: 1px solid #d68ca7; border-bottom: 1px solid #d68ca7; transform: rotate(45deg) scale(.7); top: -14px; left: 6px; }
+.envelope:after { content: '♥'; position: absolute; color: var(--accent); font-size: 12px; top: 11px; left: 15px; background: #321d30; padding: 0 2px; }
+.when { font: 10px/1.4 Arial, sans-serif; text-transform: uppercase; letter-spacing: .16em; color: var(--accent); margin-bottom: 8px; }
+.letter h2 { font-weight: 400; font-size: 22px; line-height: 1.2; margin: 0 0 9px; }
+.letter p { font: 12px/1.6 Arial, sans-serif; color: var(--muted); margin: 0; }
+.bottom-note { text-align: center; color: #bba2b4; font: italic 14px/1.7 Georgia, serif; margin: 32px auto 0; }
+.footer { text-align: center; margin-top: 38px; color: #80697b; font: 10px/1.5 Arial, sans-serif; letter-spacing: .13em; text-transform: uppercase; }
+.overlay { display: none; position: fixed; z-index: 5; inset: 0; padding: 20px; align-items: center; justify-content: center; background: rgba(8,4,10,.82); backdrop-filter: blur(8px); }
+.overlay.open { display: flex; }
+.modal { width: min(590px, 100%); max-height: 88vh; overflow: auto; position: relative; background: linear-gradient(160deg, #2b1929, #171019); border: 1px solid #87516e; border-radius: 18px; padding: clamp(25px, 6vw, 46px); box-shadow: 0 25px 90px rgba(0,0,0,.45); animation: rise .25s ease-out; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.close { position: absolute; top: 13px; right: 15px; border: 1px solid #68415c; background: transparent; color: var(--muted); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; font: 20px Arial, sans-serif; }
+.modal-kicker { color: var(--accent); font: 10px/1.5 Arial, sans-serif; letter-spacing: .2em; text-transform: uppercase; }
+.modal h2 { font-size: clamp(30px, 5vw, 42px); font-weight: 400; line-height: 1.1; margin: 12px 0 22px; }
+.message { white-space: pre-line; color: #f4e6ee; font-size: 17px; line-height: 1.9; }
+.signature { margin-top: 28px; color: var(--accent); font-style: italic; font-size: 20px; }
+.edit-hint { color: #a78d9e; font: 11px/1.6 Arial, sans-serif; margin-top: 24px; }
+@media (max-width: 700px) { main { padding-top: 39px; } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; } .letter { min-height: 180px; padding: 17px 15px; } .letter h2 { font-size: 19px; } }
+@media (max-width: 390px) { .grid { grid-template-columns: 1fr; } .letter { min-height: auto; } .envelope { margin-bottom: 14px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="stars"></div>
+  <main>
+    <div class="topline">A little place on the internet, just for you</div>
+    <h1>Open <em>when…</em></h1>
+    <p class="intro">For the days I can’t be there beside you. Pick a letter, take a breath, and let me be a little closer.</p>
+    <div class="small-heart">♡ &nbsp; ♡ &nbsp; ♡</div>
+    <section class="grid" aria-label="Letters">
+      <button class="letter" data-letter="miss"><div class="envelope"></div><div class="when">Letter no. 01</div><h2>you miss me</h2><p>For when the distance feels a little too big.</p></button>
+      <button class="letter" data-letter="sad"><div class="envelope"></div><div class="when">Letter no. 02</div><h2>you’re sad</h2><p>A soft place to land on a difficult day.</p></button>
+      <button class="letter" data-letter="sleep"><div class="envelope"></div><div class="when">Letter no. 03</div><h2>you can’t sleep</h2><p>For the quiet hours when your mind won’t rest.</p></button>
+      <button class="letter" data-letter="reassurance"><div class="envelope"></div><div class="when">Letter no. 04</div><h2>you need reassurance</h2><p>For any moment you need to remember how loved you are.</p></button>
+      <button class="letter" data-letter="laugh"><div class="envelope"></div><div class="when">Letter no. 05</div><h2>you need to smile</h2><p>A tiny reminder that I love your laugh.</p></button>
+      <button class="letter" data-letter="future"><div class="envelope"></div><div class="when">Letter no. 06</div><h2>we finally meet</h2><p>A little preview of the day I’m looking forward to.</p></button>
+    </section>
+    <p class="bottom-note">Different cities. Same sky. Still you. ♡</p>
+    <div class="footer">Made with love · for one person only</div>
+  </main>
+</div>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <article class="modal">
+    <button class="close" id="close" aria-label="Close letter">×</button>
+    <div class="modal-kicker">A letter, just for you</div>
+    <h2 id="modalTitle"></h2>
+    <div class="message" id="message"></div>
+    <div class="signature">Always yours ♡</div>
+    <p class="edit-hint">Make these words yours: replace the sample messages in the LETTERS section of this page with your own memories, nicknames, and promises.</p>
+  </article>
+</div>
+<script>
+const LETTERS = {
+  miss: { title: 'When you miss me', body: 'I wish I could be there right now, pull you close, and let you forget about the distance for a while. Since I can’t do that through a screen, let this letter be my little hug.\n\nWe might be far apart, but you’re still part of my ordinary days: the things I want to tell you, the songs that remind me of you, and the little moments I wish we could share.\n\nUntil I can hold you for real, imagine that I’m holding your hand and telling you: we’re worth the wait. ♡' },
+  sad: { title: 'When you’re sad', body: 'You don’t have to pretend to be okay for me. You can have a bad day, feel everything you need to feel, and take your time. You don’t need to earn my care by being happy all the time.\n\nIf I were there, I’d sit beside you, listen, and give you the kind of hug that says nothing needs to be fixed this second. For now, breathe slowly and be gentle with yourself.\n\nYou matter to me on your hardest days, too.' },
+  sleep: { title: 'When you can’t sleep', body: 'Hey, you. Let your shoulders relax for a second. Unclench your jaw, take a slow breath, and let today be finished. You don’t have to solve everything tonight.\n\nSomewhere under this same sky, there’s someone who’s glad you exist. Someone who hopes you’re warm, safe, and being kind to yourself.\n\nClose your eyes and imagine us talking quietly until you drift off. Goodnight, my favorite person. ♡' },
+  reassurance: { title: 'When you need reassurance', body: 'If you opened this because you’re overthinking, I want you to pause and remember that you can talk to me. You don’t have to guess what I feel or carry every worry alone.\n\nI choose you because of who you are: your little habits, your humor, your way of seeing things, and all the details that make you you. Distance can make things harder, but it doesn’t make your feelings less important.\n\nYou deserve honesty, patience, and love that feels safe. Let’s keep giving each other that.' },
+  laugh: { title: 'When you need to smile', body: 'Emergency reminder: you are ridiculously cute, and yes, I am absolutely biased. I would still choose to listen to your stories even if you told me the same one twelve times. Probably. Maybe thirteen.\n\nI hope this made you smile at least a little. Now send me that smile when you can, because I want proof that my terrible letter-writing jokes are working. ♡' },
+  future: { title: 'When we finally meet', body: 'I keep imagining that first moment. Maybe I’ll be nervous, maybe I’ll forget what I planned to say, and maybe all the things I wanted to explain will disappear the second I see you.\n\nBut I know what I want to do first: be close to you without a screen between us. Hear your voice right beside me. Make an ordinary day into a memory we’ll keep.\n\nUntil that day comes, let’s keep building something real, one call, one conversation, and one day at a time. I’m looking forward to it. ♡' }
+};
+const overlay = document.getElementById('overlay');
+const title = document.getElementById('modalTitle');
+const message = document.getElementById('message');
+function openLetter(key) { const letter = LETTERS[key]; if (!letter) return; title.textContent = letter.title; message.textContent = letter.body; overlay.classList.add('open'); document.getElementById('close').focus(); }
+function closeLetter() { overlay.classList.remove('open'); }
+document.querySelectorAll('[data-letter]').forEach(button => button.addEventListener('click', () => openLetter(button.dataset.letter)));
+document.getElementById('close').addEventListener('click', closeLetter);
+overlay.addEventListener('click', event => { if (event.target === overlay) closeLetter(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape') closeLetter(); });
+</script>
+</body>
+</html>
